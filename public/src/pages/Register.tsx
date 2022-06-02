@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { toast, ToastContainer, ToastOptions } from "react-toastify";
@@ -26,6 +26,12 @@ const Register = () => {
         draggable: true,
         theme: "dark",
     }
+
+    useEffect(() => {
+        if (localStorage.getItem('chat-app-user')) {
+            navigate('/');
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
