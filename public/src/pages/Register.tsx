@@ -49,7 +49,7 @@ const Register = () => {
 
             if (data.status === true) {
                 localStorage.setItem('chat-app-user', JSON.stringify(data.user));
-                navigate('/login');
+                navigate('/chat');
             }
         }
     }
@@ -98,7 +98,7 @@ const Register = () => {
                     <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirme sua senha" onChange={e => handleInputChange(e)} />
                     <button type="submit"> Criar Conta </button>
                     <span>
-                        Já tem uma conta? <Link to="/login">Faça login</Link>
+                        Já tem uma conta? <Link to="/">Faça login</Link>
                     </span>
                 </form>
             </FormContainer>
