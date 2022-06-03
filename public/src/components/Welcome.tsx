@@ -6,7 +6,7 @@ const Welcome = ({ currentUser } : any) => {
         <Container>
             <img src={robot} alt="robot" />
             <h1>
-                Seja bem-vindo, <span>{currentUser.username}!</span>
+                Seja bem-vindo, <span>{(currentUser) ? currentUser.username : ''}!</span>
             </h1>
             <h3>Por favor, selecione um contato para iniciar uma conversa</h3>
         </Container>
