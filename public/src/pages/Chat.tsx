@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import Contact from "../components/Contact";
+import Welcome from "../components/Welcome";
 import { allUsersRoute } from "../utils/Api";
 
 type CurrentUser = {
@@ -10,10 +12,11 @@ type CurrentUser = {
 }
 
 const Chat = () => {
+    const navigate = useNavigate();
+
     const [contacts, setContacts] = useState([]);
     const [currentUser, setCurrentUser] = useState<CurrentUser>();
-
-    const navigate = useNavigate();
+    const [currentChat, setCurrentChat] = useState(0);
 
     useEffect(() => {
         const checkUser = async () => {
@@ -42,10 +45,15 @@ const Chat = () => {
         getUsers();
     }, [currentUser]);
 
+    const handleChatChange = (chat: number) => {
+        setCurrentChat(chat)
+    }
+
     return(
         <Container>
             <div className="container">
-
+                <Contact contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} />
+                <Welcome currentUser={currentUser} />
             </div>
         </Container>
     );
