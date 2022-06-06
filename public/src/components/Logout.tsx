@@ -19,7 +19,7 @@ const Logout = () => {
 
 const Button = styled.button`
     display: flex;
-    justify-content: cennter;
+    justify-content: center;
     align-items:center;
     padding: .5rem;
     border-radius: .5rem;
