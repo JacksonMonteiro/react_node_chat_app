@@ -146,7 +146,7 @@ const Container = styled.div`
             }
         }
 
-        @media screen and (min-width: 720px) and (max-width: 1080px) {
+        @media screen and (min-width: 600px) and (max-width: 1080px) {
             gap: .5rem;
             .username {
                 h2 {

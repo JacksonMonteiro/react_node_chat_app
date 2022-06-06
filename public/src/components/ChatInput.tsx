@@ -139,6 +139,15 @@ const Container = styled.div`
             align-items: center;
             background-color: #9a86f3;
             border:none;
+
+            @media screen and (min-width: 600px) and (max-width: 1080px) {
+                padding: .3rem 1rem;
+
+                svg {
+                    font-size: 1rem;
+                }
+            }
+
             svg {
                 font-size: 1rem;
                 color: #FFF;
