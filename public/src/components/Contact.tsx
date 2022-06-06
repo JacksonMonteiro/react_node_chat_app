@@ -46,7 +46,7 @@ const Contact = ({ contacts, currentUser, changeChat }: any) => {
                         </div>
                         <div className="current-user">
                             <div className="avatar">
-                                <img src={`data:image/svg+xml;base64, ${currentUserImage}`} alt="avatar" />
+                                <img src={`data:image/svg+xml;base64,${currentUserImage}`} alt="avatar" />
                             </div>
                             <div className="username">
                                 <h2>{currentUserName}</h2>
