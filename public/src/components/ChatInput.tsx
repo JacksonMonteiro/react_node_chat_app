@@ -59,7 +59,6 @@ const Container = styled.div`
     background-color: #080420;
     padding: 0 2rem;
     padding-top: .5rem;
-    height: 9%;
 
     .button-container {
         display: flex;
