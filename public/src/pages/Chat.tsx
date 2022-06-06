@@ -1,11 +1,12 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ChatContainer from "../components/ChatContainer";
 import Contact from "../components/Contact";
 import Welcome from "../components/Welcome";
-import { allUsersRoute } from "../utils/Api";
+import { allUsersRoute, baseUrl, } from "../utils/Api";
+import { io } from 'socket.io-client';
 
 type CurrentUser = {
     _id: string
@@ -13,6 +14,8 @@ type CurrentUser = {
 }
 
 const Chat = () => {
+    const socket = useRef<any>();
+
     const navigate = useNavigate();
 
     const [contacts, setContacts] = useState([]);
@@ -48,6 +51,14 @@ const Chat = () => {
         getUsers();
     }, [currentUser]);
 
+
+    useEffect(() => {
+        if (currentUser) {
+            socket.current = io(baseUrl);
+            socket.current.emit('add-user', currentUser._id);
+        }
+    }, [currentUser]);
+
     const handleChatChange = (chat: number) => {
         setCurrentChat(chat)
     }
@@ -59,7 +70,7 @@ const Chat = () => {
                 {
                     isLoaded && currentChat === 0 ?
                     (<Welcome currentUser={currentUser} />) :
-                    (<ChatContainer currentChat={currentChat} currentUser={currentUser} />)
+                    (<ChatContainer currentChat={currentChat} currentUser={currentUser} socket={socket} />)
                 }
             </div>
         </Container>
@@ -83,7 +94,7 @@ const Container = styled.div`
         display: grid;
         grid-template-columns: 25% 75%;
 
-        @media screen and (min-width: 720px) and (max-width: 1080px) {
+        @media screen and (min-width: 600px) and (max-width: 1080px) {
             grid-template-columns: 35% 65%;
         }
     }

@@ -1,26 +1,56 @@
 import styled from 'styled-components';
 import ChatInput from './ChatInput';
 import Logout from './Logout';
-import Messages from './Messages';
 import axios from 'axios';
 import { getAllMessagesRoute, sendMessageRoute } from '../utils/Api';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
+type ArrivalMessage = {
+    fromSelf: boolean,
+    message: any,
+}
 
-const ChatContainer = ({ currentChat, currentUser }: any) => {
+const ChatContainer = ({ currentChat, currentUser, socket }: any) => {
     const [messages, setMessages] = useState<any>([]);
+    const [arrivalMessage, setArrivalMessage] = useState<ArrivalMessage>();
+    const scrollRef = useRef<any>();
 
     useEffect(() => {
-        const getMessages = async() => {
-            const response = await axios.post(getAllMessagesRoute, {
-                from: currentUser._id,
-                to: currentChat._id,
-            });
-            setMessages(response.data);
+        const getMessages = async () => {
+            if (currentChat) {
+                const response = await axios.post(getAllMessagesRoute, {
+                    from: currentUser._id,
+                    to: currentChat._id,
+                });
+                setMessages(response.data);
+            }
         }
 
         getMessages();
     }, [currentChat]);
+
+
+    useEffect(() => {
+        if (socket.current) {
+            socket.current.on('msg-receive', (msg: any) => {
+                setArrivalMessage({
+                    fromSelf: false,
+                    message: msg,
+                })
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        arrivalMessage && setMessages((prev: any) => [...prev, arrivalMessage]);
+    }, [arrivalMessage]);
+
+    useEffect(() => {
+        scrollRef.current?.scrollIntoView({
+            behavior: 'smooth'
+        })
+    })
 
     const handleSendMsg = async (msg: string) => {
         await axios.post(sendMessageRoute, {
@@ -28,6 +58,16 @@ const ChatContainer = ({ currentChat, currentUser }: any) => {
             to: currentChat._id,
             message: msg,
         });
+
+        socket.current.emit('send-msg', {
+            to: currentChat._id,
+            from: currentUser._id,
+            message: msg,
+        });
+
+        const msgs = [...messages];
+        msgs.push({ fromSelf: true, message: msg });
+        setMessages(msgs);
     }
 
     return (
@@ -48,14 +88,14 @@ const ChatContainer = ({ currentChat, currentUser }: any) => {
                         <Logout />
                     </div>
                     <div className="chat-messages">
-                        { 
+                        {
                             messages.map((message: any) => {
-                                return(
-                                    <div>
+                                return (
+                                    <div key={uuidv4()} ref={scrollRef}>
                                         <div className={`message ${message.fromSelf ? 'sended' : 'received'}`} >
                                             <div className="content">
                                                 <p>
-                                                    { message.message }
+                                                    {message.message}
                                                 </p>
                                             </div>
                                         </div>
@@ -78,7 +118,7 @@ const Container = styled.div`
     gap: .1rem;
     overflow: hidden;
 
-    @media screen and (min-width: 720px) and (max-width: 1080px) {
+    @media screen and (min-width: 600px) and (max-width: 1080px) {
         grid-template-rows: 15% 75% 15%;
     }
 
@@ -114,6 +154,14 @@ const Container = styled.div`
         flex-direction: column;
         gap:1rem;
         overflow: auto;
+        &::-webkit-scrollbar {
+            width: .2rem;
+            &-thumb {
+                background-color: #FFFFFF39;
+                width: .1rem;
+                border-radius: 1rem;
+            }
+        }
 
         .message {
             display: flex;
